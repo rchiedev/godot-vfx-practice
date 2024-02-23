@@ -1,0 +1,54 @@
+[gd_resource type="VisualShader" load_steps=6 format=3 uid="uid://dn0u4sejksvyu"]
+
+[sub_resource type="Gradient" id="Gradient_7v7hi"]
+offsets = PackedFloat32Array(0, 0.148276, 0.272414, 0.531034)
+colors = PackedColorArray(0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_j34s5"]
+gradient = SubResource("Gradient_7v7hi")
+
+[sub_resource type="VisualShaderNodeTexture" id="VisualShaderNodeTexture_i523v"]
+texture = SubResource("GradientTexture1D_j34s5")
+
+[sub_resource type="VisualShaderNodeUVFunc" id="VisualShaderNodeUVFunc_ste2q"]
+
+[sub_resource type="VisualShaderNodeInput" id="VisualShaderNodeInput_uhwv8"]
+input_name = "uv"
+
+[resource]
+code = "shader_type spatial;
+render_mode blend_mix, depth_draw_opaque, cull_back, diffuse_lambert, specular_schlick_ggx;
+
+uniform sampler2D tex_frg_2;
+
+
+
+void fragment() {
+// Input:4
+	vec2 n_out4p0 = UV;
+
+
+// UVFunc:3
+	vec2 n_in3p1 = vec2(1.00000, 1.00000);
+	vec2 n_in3p2 = vec2(0.00000, 0.00000);
+	vec2 n_out3p0 = n_in3p2 * n_in3p1 + n_out4p0;
+
+
+// Texture2D:2
+	vec4 n_out2p0 = texture(tex_frg_2, n_out3p0);
+
+
+// Output:0
+	ALPHA = n_out2p0.x;
+
+
+}
+"
+graph_offset = Vector2(-610.011, -73.2905)
+nodes/fragment/2/node = SubResource("VisualShaderNodeTexture_i523v")
+nodes/fragment/2/position = Vector2(-80, 260)
+nodes/fragment/3/node = SubResource("VisualShaderNodeUVFunc_ste2q")
+nodes/fragment/3/position = Vector2(-380, 240)
+nodes/fragment/4/node = SubResource("VisualShaderNodeInput_uhwv8")
+nodes/fragment/4/position = Vector2(-740, 200)
+nodes/fragment/connections = PackedInt32Array(2, 0, 0, 1, 4, 0, 3, 0, 3, 0, 2, 0)

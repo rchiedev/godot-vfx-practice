@@ -1,0 +1,96 @@
+[gd_scene load_steps=16 format=3 uid="uid://dbgon4kudlut3"]
+
+[ext_resource type="Shader" path="res://4. Trails/trail.gdshader" id="1_v4hks"]
+[ext_resource type="Shader" path="res://4. Trails/small_particle.gdshader" id="2_lm8hi"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_mifl3"]
+render_priority = 0
+shader = ExtResource("1_v4hks")
+shader_parameter/color = Color(0.501961, 0.419608, 1, 1)
+shader_parameter/intensity = 4.0
+
+[sub_resource type="Gradient" id="Gradient_s4bfo"]
+offsets = PackedFloat32Array(0, 0.234513, 1)
+colors = PackedColorArray(0.367257, 0.367257, 0.367257, 0.632743, 1, 1, 1, 1, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_6oeb1"]
+gradient = SubResource("Gradient_s4bfo")
+
+[sub_resource type="Curve" id="Curve_s56l5"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.244094, 1), 0.0, 0.0, 0, 0, Vector2(0.748031, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="CurveTexture" id="CurveTexture_lythc"]
+curve = SubResource("Curve_s56l5")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_tsf58"]
+emission_shape = 1
+emission_sphere_radius = 0.5
+gravity = Vector3(0, 8, 0)
+scale_min = 0.4
+scale_curve = SubResource("CurveTexture_lythc")
+color_ramp = SubResource("GradientTexture1D_6oeb1")
+turbulence_enabled = true
+turbulence_noise_scale = 3.0
+turbulence_noise_speed_random = 0.0
+turbulence_influence_max = 0.2
+
+[sub_resource type="Curve" id="Curve_o5gd5"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.496503, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="RibbonTrailMesh" id="RibbonTrailMesh_ibbqs"]
+shape = 0
+size = 0.05
+curve = SubResource("Curve_o5gd5")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_dksd5"]
+render_priority = 0
+shader = ExtResource("2_lm8hi")
+shader_parameter/color = Color(0.501961, 0.419608, 1, 1)
+shader_parameter/intensity = 8.0
+
+[sub_resource type="Gradient" id="Gradient_nrdef"]
+offsets = PackedFloat32Array(0, 0.495575, 1)
+colors = PackedColorArray(0, 0, 0, 0, 1, 1, 1, 1, 0.0431373, 0.0431373, 0.0431373, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_7i7ld"]
+gradient = SubResource("Gradient_nrdef")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_m2248"]
+emission_shape = 1
+emission_sphere_radius = 0.5
+spread = 80.0
+initial_velocity_min = 1.0
+initial_velocity_max = 4.0
+gravity = Vector3(0, 4, 0)
+scale_min = 0.02
+scale_max = 0.04
+color_ramp = SubResource("GradientTexture1D_7i7ld")
+anim_speed_min = 1.0
+anim_speed_max = 10.0
+anim_offset_max = 1.0
+turbulence_enabled = true
+turbulence_noise_scale = 3.0
+turbulence_influence_min = 0.04
+
+[sub_resource type="QuadMesh" id="QuadMesh_r7eyq"]
+
+[node name="Trails" type="Node3D"]
+
+[node name="GPUParticles3D" type="GPUParticles3D" parent="."]
+material_override = SubResource("ShaderMaterial_mifl3")
+amount = 64
+lifetime = 2.0
+transform_align = 3
+trail_enabled = true
+process_material = SubResource("ParticleProcessMaterial_tsf58")
+draw_pass_1 = SubResource("RibbonTrailMesh_ibbqs")
+
+[node name="GPUParticles3D2" type="GPUParticles3D" parent="."]
+material_override = SubResource("ShaderMaterial_dksd5")
+amount = 256
+lifetime = 2.0
+transform_align = 1
+process_material = SubResource("ParticleProcessMaterial_m2248")
+draw_pass_1 = SubResource("QuadMesh_r7eyq")

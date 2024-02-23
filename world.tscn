@@ -1,0 +1,99 @@
+[gd_scene load_steps=17 format=3 uid="uid://3s1nmv3eewbf"]
+
+[ext_resource type="Texture2D" uid="uid://c2ip768ndr15r" path="res://checkerboard.png" id="1_spahj"]
+[ext_resource type="Shader" uid="uid://brn88ajsjtpcx" path="res://5. Sword Slash/sword_slash.tres" id="2_dnpy3"]
+[ext_resource type="Texture2D" uid="uid://d172vqs44yly5" path="res://5. Sword Slash/stephen-archie-img6.jpg" id="3_l1ljh"]
+[ext_resource type="ArrayMesh" uid="uid://d1wl83nl5wurm" path="res://5. Sword Slash/slash_dae.res" id="4_t6ggc"]
+
+[sub_resource type="Gradient" id="Gradient_wcgie"]
+offsets = PackedFloat32Array(0.465812, 0.628205)
+colors = PackedColorArray(0.18359, 0.183591, 0.18359, 1, 0.290577, 0.298244, 0.330684, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_lcwtu"]
+gradient = SubResource("Gradient_wcgie")
+fill_to = Vector2(0, 1)
+
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_a6dj0"]
+panorama = SubResource("GradientTexture2D_lcwtu")
+
+[sub_resource type="Sky" id="Sky_r2iuf"]
+sky_material = SubResource("PanoramaSkyMaterial_a6dj0")
+
+[sub_resource type="Environment" id="Environment_6524l"]
+background_mode = 2
+sky = SubResource("Sky_r2iuf")
+reflected_light_source = 2
+tonemap_mode = 2
+glow_enabled = true
+glow_bloom = 0.1
+glow_blend_mode = 0
+volumetric_fog_enabled = true
+volumetric_fog_density = 0.01
+volumetric_fog_albedo = Color(1, 0.8, 0.8, 1)
+volumetric_fog_detail_spread = 6.0
+adjustment_enabled = true
+adjustment_contrast = 1.1
+
+[sub_resource type="CameraAttributesPhysical" id="CameraAttributesPhysical_i3moe"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dex5j"]
+albedo_color = Color(0.0745098, 0.0745098, 0.101961, 1)
+albedo_texture = ExtResource("1_spahj")
+uv1_scale = Vector3(20, 20, 20)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_gkbqw"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ceyvf"]
+render_priority = 0
+shader = ExtResource("2_dnpy3")
+shader_parameter/SlashTexture = ExtResource("3_l1ljh")
+
+[sub_resource type="Curve" id="Curve_rou1k"]
+min_value = -360.0
+max_value = 360.0
+_data = [Vector2(0, 21.3158), 0.0, 0.0, 0, 0, Vector2(0.980315, 360), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_hnufo"]
+curve = SubResource("Curve_rou1k")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_cbk3j"]
+particle_flag_rotate_y = true
+angular_velocity_min = 1.0
+angular_velocity_max = 1.0
+angular_velocity_curve = SubResource("CurveTexture_hnufo")
+gravity = Vector3(0, 0, 0)
+color = Color(0.776471, 0, 0.141176, 1)
+
+[node name="World" type="Node3D"]
+
+[node name="Environment" type="Node3D" parent="."]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="Environment"]
+environment = SubResource("Environment_6524l")
+camera_attributes = SubResource("CameraAttributesPhysical_i3moe")
+
+[node name="Floor" type="MeshInstance3D" parent="Environment"]
+transform = Transform3D(20, 0, 0, 0, 20, -4.76837e-06, 0, 4.76837e-06, 20, 0, 0, 0)
+material_override = SubResource("StandardMaterial3D_dex5j")
+mesh = SubResource("PlaneMesh_gkbqw")
+metadata/_edit_lock_ = true
+
+[node name="Light" type="DirectionalLight3D" parent="Environment"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 8.73562, 0)
+shadow_enabled = true
+directional_shadow_blend_splits = true
+
+[node name="Camera3D" type="Camera3D" parent="Environment"]
+transform = Transform3D(1, 0, 0, 0, 0.987131, 0.159916, 0, -0.159916, 0.987131, 0.0228267, 1.30665, 4.10003)
+fov = 90.0
+
+[node name="Node3D" type="Node3D" parent="."]
+
+[node name="GPUParticles3D" type="GPUParticles3D" parent="Node3D"]
+transform = Transform3D(0.895626, 0, -0.444807, 0, 1, 0, 0.444807, 0, 0.895626, 0, 0, 0)
+material_override = SubResource("ShaderMaterial_ceyvf")
+amount = 1
+lifetime = 0.5
+process_material = SubResource("ParticleProcessMaterial_cbk3j")
+draw_pass_1 = ExtResource("4_t6ggc")
